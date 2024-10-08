@@ -29,6 +29,64 @@ void com_init_if_uninit();
 
 
 
+
+/* === FORMAT WRAPPER === */
+class WindowsAudioFormat {
+    public:
+        size_t frame_size,
+               n_channels,
+               bits_per_sample,
+               sample_rate;
+
+        WindowsAudioFormat( WAVEFORMATEX format );
+};
+
+
+/* === CLIENT CLASS === */
+class WindowsAudioClient {
+    private:
+        IAudioClient*        client         = nullptr;
+        IAudioRenderClient*  output_service = nullptr;
+        IAudioCaptureClient* input_service  = nullptr;
+
+
+        void deallocate();
+
+        // Functions to help retrieve data
+
+
+    public:
+        // static REFIID iid; // can't do const REFIID for some reason
+
+        WindowsAudioClient(IAudioClient* client);
+
+        ~WindowsAudioClient(); // deallocate
+
+        IAudioClient** ptrptr();
+
+        IUnknown** iptrptr();
+
+        WindowsAudioFormat get_format();
+
+        // Following: Run initialize and getservice to setup service
+        void init_input_service();
+
+        void init_output_service();
+
+        // Run start, checking that initialized and service retrieved...
+        void start();
+
+        // Retrieve data
+        void get_data(); // GetBuffer then ReleaseBuffer
+
+        void send_data(); // GetBuffer then memcpy then ReleaseBuffer
+
+        // Stop
+        void stop_services();
+
+        void stop_client();
+};
+
 /* === DEVICE CLASS === */
 class WindowsAudioDevice {
     private:
@@ -46,7 +104,9 @@ class WindowsAudioDevice {
 
         IMMDevice** ptrptr( ); // deallocate(); return &device;
 
-        // IWindowsClient new_audio_client( );
+        void activate( IUnknown** ptrptr, REFIID iid = IID_IAudioClient );
+
+        WindowsAudioClient activate_client( );
 }; // DONE
 
 
@@ -92,35 +152,5 @@ class WindowsAudioEnumerator {
 
         WindowsAudioDevice get_default_device( ERole audio_role = eMultimedia );
 };
-
-
-
-/* === FORMAT WRAPPER === */
-class WindowsAudioFormat {
-    public:
-        size_t frame_size,
-               n_channels,
-               bits_per_sample,
-               sample_rate;
-
-        WindowsAudioFormat( WAVEFORMATEX format );
-};
-
-
-
-// class IWindowsClient {
-//     public:
-//         IWindowsClient() {}
-    // private:
-    //     IAudioClient* client = nullptr;
-
-    //     void deallocate();
-
-    // public:
-    //     IWindowsClient( WindowsAudioDevice device );
-
-    //     // Returns size of each frame
-    //     WindowsAudioFormat get_format();
-// };
 
 

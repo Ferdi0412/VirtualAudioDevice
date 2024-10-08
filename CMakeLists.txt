@@ -15,7 +15,8 @@ add_library(windows_audio
             lib/WindowsAudioEnumerator.cpp
             lib/WindowsAudioDevice.cpp
             lib/WindowsAudioFormat.cpp
-            lib/com_init.cpp)
+            lib/com_init.cpp
+            lib/WindowsAudioClient.cpp)
 
 # Add Windows SDK include paths
 include_directories(C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um)

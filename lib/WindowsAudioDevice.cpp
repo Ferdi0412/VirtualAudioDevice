@@ -49,9 +49,22 @@ IMMDevice** WindowsAudioDevice::ptrptr(void) {
     return &device;
 }
 
-// IWindowsClient WindowsAudioDevice::new_audio_client( ) {
-//     // HRESULT hr;
+void WindowsAudioDevice::activate( IUnknown** ptrptr, REFIID iid ) {
+    HRESULT hr;
 
-//     // TODO...
-//     return IWindowsClient();
-// }
+    if ( device == nullptr )
+        throw std::runtime_error("[WindowsAudioDevice::activate] The device is not assigned!");
+
+    hr = device->Activate(iid,
+                            CLSCTX_ALL,
+                            nullptr,
+                            (void**) ptrptr);
+    if ( !SUCCEEDED(hr) )
+        throw std::runtime_error("[WindowsAudioDevice::activate] Could not activate!");
+}
+
+WindowsAudioClient WindowsAudioDevice::activate_client(void) {
+    WindowsAudioClient new_client(nullptr);
+    activate(new_client.iptrptr());
+    return new_client;
+}
