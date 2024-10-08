@@ -1,0 +1,14 @@
+# Files from build directory...
+CMakeFiles
+*.ninja
+*.ninja*
+CMakeCache.txt
+**/*.a
+**/*.exe
+**/*.cmake
+
+# VSCode files
+.vscode
+
+# Allow for "private" files
+priv-*
